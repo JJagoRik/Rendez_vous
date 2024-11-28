@@ -1,0 +1,36 @@
+# IDE and build system files
+.idea/
+.gradle/
+build/
+
+# User-specific files
+*.iml
+*.log
+*.tmp
+*.lock
+*.hprof
+
+# Kotlin and Java-specific files
+*.class
+*.jar
+*.war
+*.ear
+
+# Local configuration files
+local.properties
+
+# Test and debugging files
+/test-results/
+/captures/
+
+# Keystore files
+*.jks
+*.keystore
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Generated files
+.cxx/
+.externalNativeBuild/
