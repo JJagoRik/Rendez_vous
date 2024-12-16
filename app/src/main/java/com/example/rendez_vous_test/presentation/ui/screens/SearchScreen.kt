@@ -7,19 +7,25 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.rendez_vous_test.presentation.FilmsLoadingState
 import com.example.rendez_vous_test.presentation.MoviesViewModel
-import com.example.rendez_vous_test.presentation.SearchFilmsLoadingState
 import com.example.rendez_vous_test.presentation.ui.Screen
 import com.example.rendez_vous_test.presentation.ui.components.MovieCard
 
@@ -28,7 +34,7 @@ fun SearchScreen(
     navController: NavController,
     viewModel: MoviesViewModel
 ) {
-    val searchQuery = remember { mutableStateOf("") }
+    val searchQuery = rememberSaveable { mutableStateOf(viewModel.lastSearchQuery) }
     val searchedMoviesState = viewModel.searchedMovies.observeAsState(emptyList())
     val searchedMovies = searchedMoviesState.value
     val genresState = viewModel.genres.observeAsState(emptyList())
@@ -38,12 +44,27 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        when(viewModel.searchFilmsLoadingState){
-            is SearchFilmsLoadingState.Error -> {
+        when(viewModel.filmsLoadingState){
+            is FilmsLoadingState.Error -> {
                 ErrorScreen {
-                    viewModel.searchMovies(searchQuery.toString())
+                    if (viewModel.movies.value.isNullOrEmpty() == true){
+                        viewModel.loadStartMovies()
+                    } else {
+                        viewModel.reloadMovies()
+                    }
+                    viewModel.reloadMoviesAfterEx(viewModel.currentPage, viewModel.lastSearchQuery)
                 }
             }
+
+            is FilmsLoadingState.Reloading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
             else -> {
                 TextField(
                     value = searchQuery.value,
@@ -65,6 +86,22 @@ fun SearchScreen(
                         }
                     )
                 )
+
+                if (searchedMovies.isEmpty() && searchQuery.value != ""){
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Ничего по вашему запросу не нашлось",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                }
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),

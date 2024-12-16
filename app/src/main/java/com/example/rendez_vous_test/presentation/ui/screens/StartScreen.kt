@@ -26,7 +26,7 @@ fun StartScreen(
     val movies = moviesState.value
     val genresState = viewModel.genres.observeAsState(emptyList())
     val genres = genresState.value
-    val isRefreshing = viewModel.filmsLoadingState is FilmsLoadingState.Reloading
+    val isRefreshing = viewModel.filmsLoadingState is FilmsLoadingState.Refreshing
 
     Box(
         modifier = Modifier

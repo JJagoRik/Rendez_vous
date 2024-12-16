@@ -5,17 +5,18 @@ import com.example.rendez_vous_test.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.rendez_vous_test.presentation.ui.Screen
+import androidx.compose.runtime.getValue
 
 @Composable
 fun BottomMenu(navController: NavController) {
-    var activeIndex = remember { mutableStateOf(0) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Row(
         modifier = Modifier
@@ -26,36 +27,31 @@ fun BottomMenu(navController: NavController) {
         BottomMenuCell(
             image = R.drawable.home,
             description = "Главная",
-            isActive = activeIndex.value == 0
+            isActive = currentRoute == Screen.StartScreen.route
         ) {
-            activeIndex.value = 0
-            navController.navigate(Screen.StartScreen.route)
+            navController.navigate(Screen.StartScreen.route) {
+                popUpTo(Screen.StartScreen.route) { inclusive = true }
+            }
         }
 
         BottomMenuCell(
             image = R.drawable.favorites,
             description = "Избранное",
-            isActive = activeIndex.value == 1
+            isActive = currentRoute == Screen.FavoritesScreen.route
         ) {
-            activeIndex.value = 1
-            navController.navigate(Screen.FavoritesScreen.route)
-        }
-
-        BottomMenuCell(
-            image = R.drawable.profile,
-            description = "Профиль",
-            isActive = activeIndex.value == 2
-        ) {
-            activeIndex.value = 2
+            navController.navigate(Screen.FavoritesScreen.route) {
+                popUpTo(Screen.FavoritesScreen.route) { inclusive = true }
+            }
         }
 
         BottomMenuCell(
             image = R.drawable.search,
             description = "Поиск",
-            isActive = activeIndex.value == 3
+            isActive = currentRoute == Screen.SearchScreen.route
         ) {
-            activeIndex.value = 3
-            navController.navigate(Screen.SearchScreen.route)
+            navController.navigate(Screen.SearchScreen.route) {
+                popUpTo(Screen.SearchScreen.route) { inclusive = true }
+            }
         }
     }
 }
