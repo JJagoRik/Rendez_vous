@@ -75,6 +75,7 @@ class MoviesViewModel @Inject constructor(
 
     fun getMovies(page: Int) {
         viewModelScope.launch {
+            Log.d("Err", "No loading")
             try {
                 if (filmsLoadingState is FilmsLoadingState.LoadingOnStart){
                     getPages()
