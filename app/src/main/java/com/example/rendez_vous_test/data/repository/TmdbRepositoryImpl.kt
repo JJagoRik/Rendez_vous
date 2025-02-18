@@ -1,6 +1,5 @@
 package com.example.rendez_vous_test.data.repository
 
-import com.example.rendez_vous_test.BuildConfig
 import com.example.rendez_vous_test.data.datasource.remote.TmdbApi
 import com.example.rendez_vous_test.data.mapper.GenresMapper
 import com.example.rendez_vous_test.data.mapper.PagesMapper

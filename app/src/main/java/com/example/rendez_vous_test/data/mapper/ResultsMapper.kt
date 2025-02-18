@@ -12,7 +12,8 @@ class ResultsMapper {
                 ?: "https://via.placeholder.com/300",
             overview = movie.overview ?: "No description available",
             voteAvg = movie.voteAverage ?: 0.0,
-            genreId = movie.genreIds.firstOrNull() ?: 28
+            genreId = movie.genreIds.firstOrNull() ?: 28,
+            releaseDate = movie.releaseDate ?: "No date"
         )
     }
 }

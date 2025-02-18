@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
 
 @Composable
 fun RowScope.BottomMenuCell(
@@ -31,6 +32,9 @@ fun RowScope.BottomMenuCell(
     onClick: () -> Unit
 ){
     var isColored = remember { mutableStateOf(false) }
+    val scale = LocalConfiguration.current
+        .screenWidthDp
+        .coerceAtMost(LocalConfiguration.current.screenHeightDp)
 
     Box(
         modifier = Modifier
@@ -49,7 +53,7 @@ fun RowScope.BottomMenuCell(
             Box(
                 modifier = Modifier
                     .padding(top = 4.dp)
-                    .requiredHeight(30.dp),
+                    .requiredHeight((scale * 0.083).dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -71,7 +75,7 @@ fun RowScope.BottomMenuCell(
                 text = description,
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp,
+                    fontSize = (scale * 0.03f).sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             )

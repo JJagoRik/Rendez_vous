@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rendez_vous_test.domain.model.GenreIdName
 import com.example.rendez_vous_test.domain.model.Movie
-import com.example.rendez_vous_test.domain.repository.TmdbRepository
 import com.example.rendez_vous_test.domain.use_case.GetGenresUseCase
 import com.example.rendez_vous_test.domain.use_case.GetMoviesUseCase
 import com.example.rendez_vous_test.domain.use_case.GetPagesUseCase
@@ -28,12 +27,7 @@ sealed interface FilmsLoadingState {
     object Error : FilmsLoadingState
     object LoadingOnStart : FilmsLoadingState
     object Reloading : FilmsLoadingState
-}
-
-sealed interface SearchFilmsLoadingState {
-    object Error : SearchFilmsLoadingState
-    object Success : SearchFilmsLoadingState
-    object Loading : SearchFilmsLoadingState
+    object Refreshing : FilmsLoadingState
 }
 
 @HiltViewModel
@@ -46,7 +40,6 @@ class MoviesViewModel @Inject constructor(
 ) : ViewModel() {
 
     var filmsLoadingState: FilmsLoadingState by mutableStateOf(FilmsLoadingState.LoadingOnStart)
-    var searchFilmsLoadingState: SearchFilmsLoadingState by mutableStateOf(SearchFilmsLoadingState.Loading)
 
     private val _movies = MutableLiveData<List<Movie>>(emptyList())
     val movies: LiveData<List<Movie>> = _movies
@@ -64,7 +57,7 @@ class MoviesViewModel @Inject constructor(
         "movies_prefs",
         Context.MODE_PRIVATE
     )
-    private var lastSearchQuery: String
+    var lastSearchQuery: String
         get() = sharedPreferences.getString("last_search_query", "") ?: ""
         set(value) {
             sharedPreferences.edit().putString("last_search_query", value).apply()
@@ -82,6 +75,7 @@ class MoviesViewModel @Inject constructor(
 
     fun getMovies(page: Int) {
         viewModelScope.launch {
+            Log.d("Err", "No loading")
             try {
                 if (filmsLoadingState is FilmsLoadingState.LoadingOnStart){
                     getPages()
@@ -102,13 +96,17 @@ class MoviesViewModel @Inject constructor(
                 val searchResults = searchMoviesUseCase(query)
                 _searchedMovies.value = searchResults
                 lastSearchQuery = query
-                searchFilmsLoadingState = SearchFilmsLoadingState.Success
+                filmsLoadingState = FilmsLoadingState.Success
             } catch (e: Exception) {
-                searchFilmsLoadingState = SearchFilmsLoadingState.Error
+                filmsLoadingState = FilmsLoadingState.Error
             }
         }
     }
 
+    fun reloadMoviesAfterEx(page: Int, query: String){
+        getMovies(page)
+        searchMovies(query)
+    }
 
     fun getGenres() {
         viewModelScope.launch {

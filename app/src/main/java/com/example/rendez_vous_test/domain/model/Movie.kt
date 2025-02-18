@@ -7,6 +7,7 @@ data class Movie(
     val overview: String?,
     val voteAvg: Double?,
     val genreId: Int?,
+    val releaseDate: String?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

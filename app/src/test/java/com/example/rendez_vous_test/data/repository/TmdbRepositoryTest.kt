@@ -55,7 +55,8 @@ class TmdbRepositoryImplTest {
             movieImage = "https://image.tmdb.org/t/p/w500/image_url",
             overview = "Movie overview",
             voteAvg = 8.5,
-            genreId = 28
+            genreId = 28,
+            releaseDate = "",
         )
 
         coEvery { tmdbApi.getMovies(API_KEY, 1) } returns popularMovies
@@ -101,7 +102,8 @@ class TmdbRepositoryImplTest {
             movieImage = "https://image.tmdb.org/t/p/w500/image_url",
             overview = "Movie overview",
             voteAvg = 8.5,
-            genreId = 28
+            genreId = 28,
+            releaseDate = "",
         )
 
         coEvery { tmdbApi.searchMovies(API_KEY, query) } returns searchResult
